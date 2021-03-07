@@ -1,0 +1,50 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 02.03.2021, 19:55:14
+    Author     : Подключенец
+*/
+
+
+@font-face{
+    font-family:"Capture Smallz";
+    src:url("Capture_Smallz.ttf");    
+}
+@font-face{
+    font-family: "JMH Typewriter dry";    
+    src:url("JMH_Typewriter_dry.otf");
+}
+.root{
+    -fx-background-color: linear-gradient(to right,#ffcc00,#33ff33 15%,#ffffff 20%,#ffffff 80%,#33ff33 85%,#ffcc00);    
+}
+.button{
+    -fx-background-color:transparent;
+    -fx-stroke:#999999;
+    -fx-border-width: 5;
+    -fx-border-color: #999999;
+    -fx-font-color:white;
+    -fx-background-radius:0;
+}
+.button:hover{
+    -fx-background-color:#33ff33;
+    -fx-text-fill:white;
+    -fx-border-color:#ffcc00;
+}
+.button:pressed{
+    -fx-border-color:black;    
+}
+.pane{
+    -fx-background-color:#ccffcc;
+}
+.text{
+    -fx-font-family: "JMH Typewriter dry";
+    -fx-font-size:14;
+}
+.head{
+    -fx-font-family: "Capture Smallz";
+    -fx-font-weight: bold;
+    -fx-font-size:16;
+}
