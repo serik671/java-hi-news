@@ -3,28 +3,21 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import javafx.application.Application;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Priority;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
@@ -49,12 +42,15 @@ public class JavaHiNews extends Application{
     private static ImageView img = new ImageView();
     private static Text text = new Text();
     private static Text head = new Text();
-    private static final Button btnRef = new Button("Читать далее ->");
+    private static final Button btnRef = new Button("_Читать далее ->");
     private static Button btnR = new Button("_>>");
     private static Button btnL = new Button("<_<");
     private static Text count = new Text();
     private static HBox hbox = new HBox(btnL,count,btnR);
     private static StackPane spane = new StackPane();
+    private static final SuperButton upload = new SuperButton("Обновить",100,30);
+    private static final SuperButton about = new SuperButton("Справка",100,30);
+    public static String statusId=null;
     
     @Override public void start(Stage stage)throws Exception{
         scene.getStylesheets().add("css/style.css");  
@@ -70,6 +66,7 @@ public class JavaHiNews extends Application{
         
         Parse();  
         //onError();
+        
         
         scene.setOnKeyPressed(event->{
             if(event.getCode() == KeyCode.RIGHT)RightScroll();
@@ -106,12 +103,20 @@ public class JavaHiNews extends Application{
         //HBox
         AnchorPane.setRightAnchor(hbox, 100.00);
         AnchorPane.setLeftAnchor(hbox, 10.00);
+        //SuperButton
+        AnchorPane.setBottomAnchor(upload, 0.00);
+        AnchorPane.setLeftAnchor(upload, 10.0);
+        AnchorPane.setBottomAnchor(about,0.00);
+        AnchorPane.setRightAnchor(about, 10.0);
+        
+        upload.setOnMouseClicked(event->Parse());
+        about.setOnMouseClicked(event->new HelpPane());
         
         spane.getChildren().add(hbox);
         spane.getStyleClass().add("pane");
         spane.setAlignment(Pos.CENTER);
         
-        root.getChildren().addAll(vbox,spane);
+        root.getChildren().addAll(vbox,spane,upload,about);
         
         stage.setOnCloseRequest(event->{
             SaveSize(stage);
@@ -129,11 +134,17 @@ public class JavaHiNews extends Application{
         stage.setMinHeight(height+50);
     }
     
-    private void Parse(){
+    public static void Parse(){
         try{
             doc = Jsoup.parse(new URL(url), 5000);
             Element main = doc.select("div[id=content]").first();
-            elNews = main.select("div[class=roll main-roll]").first().select("article"); 
+            elNews = main.select("div[class=roll main-roll]").first().select("article");
+            if(statusId!=null)
+                if(statusId.equals(elNews.attr("id"))){
+                    showMessage("Загружены последние новости");              
+                    return;
+                }else showMessage("Новости обновлены");
+            statusId = elNews.attr("id");
             String url = elNews.first().selectFirst("div[class=cover]").selectFirst("img").attr("src");
             InputImage(url);
             n = 0;
@@ -145,6 +156,16 @@ public class JavaHiNews extends Application{
             System.err.println(e.getMessage());
         }
     }
+    
+    private static void showMessage(String text){
+        Alert msg = new Alert(Alert.AlertType.INFORMATION);                
+        msg.setTitle(title);
+        msg.setContentText(text);
+        msg.setHeaderText(null);                
+        msg.showAndWait();                        
+    }
+    
+    
     private void Load(int a){
         head.setText(elNews.get(a).selectFirst("a").text());
         text.setText(elNews.get(a).selectFirst("p").text());
@@ -153,9 +174,8 @@ public class JavaHiNews extends Application{
         else url= elNews.get(a).selectFirst("img").attr("data-src");
         InputImage(url);
         count.setText(String.format("(%d/%d)",n+1,size));
-        
     }
-    private void InputImage(String url){
+    private static void InputImage(String url){
         try{
             URLConnection connection = new URL(url).openConnection();
             connection.addRequestProperty("User-Agent", "Mypal");          

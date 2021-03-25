@@ -5,7 +5,6 @@ and open the template in the editor.
 */
 /* 
     Created on : 02.03.2021, 19:55:14
-    Author     : Подключенец
 */
 
 
@@ -47,4 +46,15 @@ and open the template in the editor.
     -fx-font-family: "Capture Smallz";
     -fx-font-weight: bold;
     -fx-font-size:16;
+}
+.super{
+    -fx-stroke-width:4;
+    -fx-stroke:#999999;
+    -fx-fill:#ffcc00;
+}
+.super:hover{
+    -fx-stroke:white;
+}
+.super:pressed{
+    -fx-stroke:black;
 }
